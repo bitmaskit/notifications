@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bitmaskit/notifications/frontend/channel"
-	"github.com/bitmaskit/notifications/frontend/kafka"
-	"github.com/bitmaskit/notifications/frontend/model"
+	"github.com/bitmaskit/notifications/channel"
+	"github.com/bitmaskit/notifications/kafka"
+	"github.com/bitmaskit/notifications/model"
 )
 
 const ErrInternalServerError = "Internal server error"
