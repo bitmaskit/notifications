@@ -17,7 +17,7 @@ type API struct {
 }
 
 func (a *API) IndexHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("views/index.html")
+	t, err := template.ParseFiles("frontend/views/index.html")
 	if err != nil {
 		log.Println("Failed to parse template: ", err)
 		http.Error(w, ErrInternalServerError, http.StatusInternalServerError)
