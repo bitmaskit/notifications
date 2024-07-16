@@ -6,20 +6,20 @@ import (
 
 	"github.com/bitmaskit/notifications/channel"
 	"github.com/bitmaskit/notifications/kafka"
-	"github.com/bitmaskit/notifications/kafka/topic"
+	"github.com/bitmaskit/notifications/router/config"
 )
 
-func Route(kafka kafka.Kafka, msg string, channels []channel.Channel) error {
+func Route(kafka kafka.Kafka, msg string, channels []channel.Channel, cfg *config.RouterConfig) error {
 	var errs []error
 	for _, ch := range channels {
 		var err error
 		switch ch {
 		case channel.Email:
-			err = kafka.ProduceToTopic(msg, topic.EmailTopic)
+			err = kafka.ProduceToTopic(msg, cfg.EmailTopic)
 		case channel.Slack:
-			err = kafka.ProduceToTopic(msg, topic.SlackTopic)
+			err = kafka.ProduceToTopic(msg, cfg.SlackTopic)
 		case channel.SMS:
-			err = kafka.ProduceToTopic(msg, topic.SmsTopic)
+			err = kafka.ProduceToTopic(msg, cfg.SmsTopic)
 		default:
 			err = errors.New("unknown channel")
 		}

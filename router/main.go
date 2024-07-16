@@ -9,47 +9,65 @@ import (
 	"github.com/bitmaskit/notifications/channel"
 	"github.com/bitmaskit/notifications/kafka"
 	"github.com/bitmaskit/notifications/model"
+	"github.com/bitmaskit/notifications/router/config"
 	"github.com/bitmaskit/notifications/router/router"
 
 	"github.com/IBM/sarama"
 	"github.com/joho/godotenv"
 )
 
-const (
-	env = ".env"
-)
+const env = ".env"
 
-var (
-	brokerAddr         string
-	notificationsTopic string
-)
+var routerConfig *config.RouterConfig
 
 func init() {
 	if err := godotenv.Load(env); err != nil {
 		log.Fatalf("Failed to load env: %v", err)
 	}
+	var brokerAddr string
+	var notificationsTopic, smsTopic, emailTopic, slackTopic string
 
 	if brokerAddr = os.Getenv("KAFKA_BROKER_ADDRESS"); brokerAddr == "" {
 		log.Fatalln("KAFKA_BROKER_ADDRESS is not set")
 	}
-	if notificationsTopic = os.Getenv("NOTIFICATIONS_TOPIC"); notificationsTopic == "" {
-		log.Fatalln("NOTIFICATIONS_TOPIC is not set")
+	if notificationsTopic = os.Getenv("NOTIFICATIONS_KAFKA_TOPIC"); notificationsTopic == "" {
+		log.Fatalln("NOTIFICATIONS_KAFKA_TOPIC is not set")
+	}
+	if smsTopic = os.Getenv("SMS_KAFKA_TOPIC"); smsTopic == "" {
+		log.Fatalln("SMS_KAFKA_TOPIC is not set")
+	}
+	if emailTopic = os.Getenv("EMAIL_KAFKA_TOPIC"); emailTopic == "" {
+		log.Fatalln("EMAIL_KAFKA_TOPIC is not set")
+	}
+	if slackTopic = os.Getenv("SLACK_KAFKA_TOPIC"); slackTopic == "" {
+		log.Fatalln("SLACK_KAFKA_TOPIC is not set")
+	}
+
+	routerConfig = &config.RouterConfig{
+		BrokerAddr:        brokerAddr,
+		NotificationTopic: notificationsTopic,
+		SmsTopic:          smsTopic,
+		EmailTopic:        emailTopic,
+		SlackTopic:        slackTopic,
 	}
 }
 
 func main() {
 	log.Println("Starting router... Listening for notifications")
-	kafka := kafka.New(brokerAddr)
-	consumeNotifications(kafka, notificationsTopic)
+	kafka := kafka.New(
+		routerConfig.BrokerAddr,
+		routerConfig.NotificationTopic,
+	)
+	consumeNotifications(kafka, routerConfig)
 }
 
-func consumeNotifications(kafka kafka.Kafka, topic string) {
+func consumeNotifications(kafka kafka.Kafka, cfg *config.RouterConfig) {
 	// consumer code
 	consumer, err := sarama.NewConsumer([]string{kafka.BrokerAddr()}, nil)
 	if err != nil {
 		log.Fatalf("Error creating consumer: %v", err)
 	}
-	partitionConsumer, err := consumer.ConsumePartition(topic, 0, sarama.OffsetNewest)
+	partitionConsumer, err := consumer.ConsumePartition(cfg.NotificationTopic, 0, sarama.OffsetNewest)
 	if err != nil {
 		log.Fatalf("Error consuming partition: %v", err)
 	}
@@ -65,7 +83,7 @@ func consumeNotifications(kafka kafka.Kafka, topic string) {
 			if err != nil {
 				log.Println("Error decoding message:", err)
 			}
-			if err := router.Route(kafka, message, channels); err != nil {
+			if err := router.Route(kafka, message, channels, cfg); err != nil {
 				log.Println("Error routing message:", err)
 			}
 		}
