@@ -37,8 +37,9 @@ func (k Kafka) Produce(msg model.NotificationRequest) error {
 	partition, offset, err := producer.SendMessage(m)
 	if err != nil {
 		log.Printf("Failed to produce message: %s", err)
-	} else {
-		log.Printf("Produced message to partition %d with offset %d\n", partition, offset)
+		return err
 	}
+	log.Printf("Produced message to partition %d with offset %d\n", partition, offset)
+
 	return nil
 }
