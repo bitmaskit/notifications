@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/bitmaskit/notifications/frontend/api"
 	"github.com/joho/godotenv"
 )
 

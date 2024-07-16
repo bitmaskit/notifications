@@ -5,8 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bitmaskit/notifications/channel"
-	"github.com/bitmaskit/notifications/kafka"
+	"github.com/bitmaskit/notifications/frontend/channel"
+	"github.com/bitmaskit/notifications/frontend/kafka"
+	"github.com/bitmaskit/notifications/frontend/model"
 )
 
 const ErrInternalServerError = "Internal server error"
@@ -68,7 +69,7 @@ func (a *API) PostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	kafkaMsg := kafka.Message{
+	kafkaMsg := model.NotificationRequest{
 		Message:  message,
 		Channels: channels,
 	}
