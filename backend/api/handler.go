@@ -15,18 +15,16 @@ const (
 )
 
 type API struct {
-	Kafka kafka.Kafka
+	Kafka              kafka.Kafka
+	NotificationsTopic string
 }
 
 func (a *API) PostHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Received request")
-
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// parse json
 	var message model.NotificationRequest
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&message); err != nil {
@@ -39,7 +37,7 @@ func (a *API) PostHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// send to kafka
-	if err := a.Kafka.Produce(message); err != nil {
+	if err := a.Kafka.ProduceNotification(message); err != nil {
 		log.Println("Error sending message to kafka: ", err)
 		http.Error(w, "Error producing message", http.StatusInternalServerError)
 		response.Message = UnsuccessfulMessage
