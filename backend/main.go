@@ -13,17 +13,27 @@ import (
 
 const env = ".env"
 
-var port string
+var (
+	port       string
+	brokerAddr string
+)
 
-func main() {
+func init() {
 	if err := godotenv.Load(env); err != nil {
 		log.Fatalf("Failed to load env: %v", err)
 	}
 	if port = os.Getenv("BACKEND_PORT"); port == "" {
-		port = "8080"
+		log.Fatalln("BACKEND_PORT is not set")
 	}
+	if brokerAddr = os.Getenv("KAFKA_BROKER_ADDRESS"); brokerAddr == "" {
+		log.Fatalln("KAFKA_BROKER_ADDRESS is not set")
+	}
+}
 
-	api := api.API{Kafka: kafka.Kafka{}}
+func main() {
+	api := api.API{
+		Kafka: kafka.New(brokerAddr),
+	}
 
 	http.HandleFunc("/message", api.PostHandler)
 
