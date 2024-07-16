@@ -3,11 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/bitmaskit/notifications/channel"
+	"github.com/bitmaskit/notifications/kafka"
 	"github.com/bitmaskit/notifications/model"
 	"github.com/bitmaskit/notifications/router/router"
 
@@ -16,11 +16,13 @@ import (
 )
 
 const (
-	env   = ".env"
-	topic = "notifications"
+	env = ".env"
 )
 
-var brokerAddr string
+var (
+	brokerAddr         string
+	notificationsTopic string
+)
 
 func init() {
 	if err := godotenv.Load(env); err != nil {
@@ -30,19 +32,20 @@ func init() {
 	if brokerAddr = os.Getenv("KAFKA_BROKER_ADDRESS"); brokerAddr == "" {
 		log.Fatalln("KAFKA_BROKER_ADDRESS is not set")
 	}
+	if notificationsTopic = os.Getenv("NOTIFICATIONS_TOPIC"); notificationsTopic == "" {
+		log.Fatalln("NOTIFICATIONS_TOPIC is not set")
+	}
 }
 
 func main() {
-	// 1. consumer from notifications topic
-	// 2. figure out which channels the message should go to
-	// 3. send the message to the appropriate channel
 	log.Println("Starting router... Listening for notifications")
-	consumeNotifications()
+	kafka := kafka.New(brokerAddr)
+	consumeNotifications(kafka, notificationsTopic)
 }
 
-func consumeNotifications() {
+func consumeNotifications(kafka kafka.Kafka, topic string) {
 	// consumer code
-	consumer, err := sarama.NewConsumer([]string{brokerAddr}, nil)
+	consumer, err := sarama.NewConsumer([]string{kafka.BrokerAddr()}, nil)
 	if err != nil {
 		log.Fatalf("Error creating consumer: %v", err)
 	}
@@ -58,13 +61,11 @@ func consumeNotifications() {
 	for {
 		select {
 		case msg := <-partitionConsumer.Messages():
-			fmt.Printf("Consumed message offset %d\n", msg.Offset)
-			fmt.Printf("Message value: %s\n", string(msg.Value))
 			message, channels, err := decodeMessage(msg.Value)
 			if err != nil {
 				log.Println("Error decoding message:", err)
 			}
-			if err := router.Route(message, channels); err != nil {
+			if err := router.Route(kafka, message, channels); err != nil {
 				log.Println("Error routing message:", err)
 			}
 		}
@@ -78,9 +79,6 @@ func decodeMessage(msgValue []byte) (string, []channel.Channel, error) {
 		log.Println("Error decoding request body:", err)
 		return "", nil, err
 	}
-
-	log.Println("Decoded message:", nr.Message)
-	log.Println("Decoded channels:", nr.Channels)
 
 	return nr.Message, nr.Channels, nil
 }

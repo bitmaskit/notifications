@@ -9,12 +9,7 @@ import (
 	"github.com/bitmaskit/notifications/kafka/topic"
 )
 
-const (
-	brokerAddress = "localhost:9092"
-)
-
-func Route(msg string, channels []channel.Channel) error {
-	kafka := kafka.New(brokerAddress)
+func Route(kafka kafka.Kafka, msg string, channels []channel.Channel) error {
 	var errs []error
 	for _, ch := range channels {
 		var err error
