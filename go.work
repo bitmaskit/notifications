@@ -2,5 +2,8 @@ go 1.22.5
 
 use (
 	./backend
+	./channel
 	./frontend
+	./kafka
+	./model
 )

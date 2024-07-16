@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"encoding/json"
-	"github.com/bitmaskit/notifications/frontend/channel"
+	"github.com/bitmaskit/notifications/channel"
 )
 
 type NotificationRequest struct {

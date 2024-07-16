@@ -1,6 +1,10 @@
-module github.com/bitmaskit/notifications/backend
+module github.com/bitmaskit/notifications/kafka
 
 go 1.22.5
+
+require (
+	github.com/IBM/sarama v1.43.2
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

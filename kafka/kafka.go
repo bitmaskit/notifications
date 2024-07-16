@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/IBM/sarama"
-	"github.com/bitmaskit/notifications/frontend/model"
+	"github.com/bitmaskit/notifications/model"
 )
 
 const (
