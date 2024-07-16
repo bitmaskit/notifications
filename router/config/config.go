@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -28,7 +27,7 @@ type RouterConfig struct {
 
 func Load() (*RouterConfig, error) {
 	if err := godotenv.Load(env); err != nil {
-		log.Fatalf("Failed to load env: %v", err)
+		return nil, err
 	}
 
 	brokerAddr := os.Getenv("KAFKA_BROKER_ADDRESS")
