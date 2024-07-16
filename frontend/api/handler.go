@@ -1,11 +1,11 @@
-package frontend
+package api
 
 import (
 	"html/template"
 	"log"
 	"net/http"
 
-	"github.com/bitmaskit/notifications/internal/channel"
+	"github.com/bitmaskit/notifications/channel"
 	"github.com/bitmaskit/notifications/kafka"
 )
 

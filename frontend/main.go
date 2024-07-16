@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/bitmaskit/notifications/internal/handler/frontend"
 	"github.com/joho/godotenv"
 )
 
@@ -18,7 +17,7 @@ func main() {
 		log.Fatalf("Failed to load env: %v", err)
 	}
 
-	api := &frontend.API{}
+	api := &api.API{}
 
 	http.HandleFunc("GET /", api.IndexHandler)
 	http.HandleFunc("POST /", api.PostHandler)

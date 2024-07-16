@@ -1,9 +1,8 @@
 package kafka
 
 import (
+	"github.com/bitmaskit/notifications/channel"
 	"log"
-
-	"github.com/bitmaskit/notifications/internal/channel"
 )
 
 type Message struct {
