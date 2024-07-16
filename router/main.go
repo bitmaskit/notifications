@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"log"
-	"os"
 
 	"github.com/bitmaskit/notifications/channel"
 	"github.com/bitmaskit/notifications/kafka"
@@ -13,52 +12,19 @@ import (
 	"github.com/bitmaskit/notifications/router/router"
 
 	"github.com/IBM/sarama"
-	"github.com/joho/godotenv"
 )
 
-const env = ".env"
-
-var routerConfig *config.RouterConfig
-
-func init() {
-	if err := godotenv.Load(env); err != nil {
-		log.Fatalf("Failed to load env: %v", err)
-	}
-	var brokerAddr string
-	var notificationsTopic, smsTopic, emailTopic, slackTopic string
-
-	if brokerAddr = os.Getenv("KAFKA_BROKER_ADDRESS"); brokerAddr == "" {
-		log.Fatalln("KAFKA_BROKER_ADDRESS is not set")
-	}
-	if notificationsTopic = os.Getenv("NOTIFICATIONS_KAFKA_TOPIC"); notificationsTopic == "" {
-		log.Fatalln("NOTIFICATIONS_KAFKA_TOPIC is not set")
-	}
-	if smsTopic = os.Getenv("SMS_KAFKA_TOPIC"); smsTopic == "" {
-		log.Fatalln("SMS_KAFKA_TOPIC is not set")
-	}
-	if emailTopic = os.Getenv("EMAIL_KAFKA_TOPIC"); emailTopic == "" {
-		log.Fatalln("EMAIL_KAFKA_TOPIC is not set")
-	}
-	if slackTopic = os.Getenv("SLACK_KAFKA_TOPIC"); slackTopic == "" {
-		log.Fatalln("SLACK_KAFKA_TOPIC is not set")
-	}
-
-	routerConfig = &config.RouterConfig{
-		BrokerAddr:        brokerAddr,
-		NotificationTopic: notificationsTopic,
-		SmsTopic:          smsTopic,
-		EmailTopic:        emailTopic,
-		SlackTopic:        slackTopic,
-	}
-}
-
 func main() {
-	log.Println("Starting router... Listening for notifications")
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("Error loading config: %v", err)
+	}
 	kafka := kafka.New(
-		routerConfig.BrokerAddr,
-		routerConfig.NotificationTopic,
+		cfg.BrokerAddr,
+		cfg.NotificationTopic,
 	)
-	consumeNotifications(kafka, routerConfig)
+	log.Println("Starting router... Listening for notifications")
+	consumeNotifications(kafka, cfg)
 }
 
 func consumeNotifications(kafka kafka.Kafka, cfg *config.RouterConfig) {
