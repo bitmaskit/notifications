@@ -3,6 +3,14 @@ module github.com/bitmaskit/notifications/backend
 go 1.22.5
 
 require (
+	github.com/bitmaskit/notifications/kafka v0.0.0-20240717082714-b79be47b0385
+	github.com/bitmaskit/notifications/model v0.0.0-20240717082714-b79be47b0385
+	github.com/joho/godotenv v1.5.1
+)
+
+require (
+	github.com/IBM/sarama v1.43.2 // indirect
+	github.com/bitmaskit/notifications/channel v0.0.0-20240717081551-79fa42d173e6 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.6.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
