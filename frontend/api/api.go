@@ -7,10 +7,10 @@ import (
 )
 
 type api struct {
-	Config *config.Config
+	Config *config.FrontendConfig
 }
 
-func New(config *config.Config) Api {
+func New(config *config.FrontendConfig) Api {
 	return &api{Config: config}
 }
 
