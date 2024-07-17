@@ -1,25 +1,33 @@
 package router
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"log"
 
 	"github.com/bitmaskit/notifications/channel"
 	"github.com/bitmaskit/notifications/kafka"
+	"github.com/bitmaskit/notifications/model"
 	"github.com/bitmaskit/notifications/router/config"
 )
 
-func Route(kafka kafka.Kafka, msg string, channels []channel.Channel, cfg *config.RouterConfig) error {
+func route(kafka kafka.Kafka, msg []byte, cfg *config.RouterConfig) error {
+	message, channels, err := decodeMessage(msg)
+	if err != nil {
+		log.Println("Error decoding message: ", err)
+		return err
+	}
 	var errs []error
 	for _, ch := range channels {
 		var err error
 		switch ch {
 		case channel.Email:
-			err = kafka.ProduceToTopic(msg, cfg.EmailTopic)
+			err = kafka.ProduceToTopic(message, cfg.EmailTopic)
 		case channel.Slack:
-			err = kafka.ProduceToTopic(msg, cfg.SlackTopic)
+			err = kafka.ProduceToTopic(message, cfg.SlackTopic)
 		case channel.SMS:
-			err = kafka.ProduceToTopic(msg, cfg.SmsTopic)
+			err = kafka.ProduceToTopic(message, cfg.SmsTopic)
 		default:
 			err = errors.New("unknown channel")
 		}
@@ -35,4 +43,15 @@ func Route(kafka kafka.Kafka, msg string, channels []channel.Channel, cfg *confi
 		return errs[0]
 	}
 	return nil
+}
+
+func decodeMessage(msgValue []byte) (string, []channel.Channel, error) {
+	nr := model.NotificationRequest{}
+	reader := bytes.NewReader(msgValue)
+	if err := json.NewDecoder(reader).Decode(&nr); err != nil {
+		log.Println("Error decoding request body:", err)
+		return "", nil, err
+	}
+
+	return nr.Message, nr.Channels, nil
 }
