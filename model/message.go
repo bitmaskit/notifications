@@ -1,8 +1,8 @@
 package model
 
 import (
-	"io"
 	"log"
+	"strings"
 
 	"encoding/json"
 	"github.com/bitmaskit/notifications/channel"
@@ -27,8 +27,9 @@ func (r *NotificationRequest) ToJSONString() (string, error) {
 	return string(jsonData), err
 }
 
-func (r *NotificationRequest) FromJSON(body io.ReadCloser) (NotificationRequest, error) {
-	decoder := json.NewDecoder(body)
+func (r *NotificationRequest) FromJSON(body string) (NotificationRequest, error) {
+	reader := strings.NewReader(body)
+	decoder := json.NewDecoder(reader)
 	err := decoder.Decode(r)
 	if err != nil {
 		log.Println("Error decoding request body:", err)
