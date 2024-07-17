@@ -21,7 +21,6 @@ func (a *api) IndexHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Failed to parse template: ", err)
 		http.Error(w, ErrInternalServerError, http.StatusInternalServerError)
 		return
-
 	}
 	if err := t.Execute(w, nil); err != nil {
 		log.Println("Failed to parse template: ", err)

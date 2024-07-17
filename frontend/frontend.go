@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/bitmaskit/notifications/frontend/api"
-	"github.com/bitmaskit/notifications/frontend/config"
 	"log"
 	"net/http"
+
+	"github.com/bitmaskit/notifications/frontend/api"
+	"github.com/bitmaskit/notifications/frontend/config"
 )
 
 func main() {
