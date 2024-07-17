@@ -68,6 +68,22 @@ services:
       - SLACK_KAFKA_TOPIC=slack-messages
     depends_on:
       - kafka
+      - zookeeper
+    networks:
+      - app-network
+
+  slack:
+    build:
+      context: ./slack
+      args:
+        - --no-cache
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka:9092
+      - SLACK_KAFKA_TOPIC=slack-messages
+      - SLACK_WEBHOOK_URL=https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
+    depends_on:
+      - kafka
+      - router
     networks:
       - app-network
 

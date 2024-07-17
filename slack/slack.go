@@ -23,7 +23,7 @@ func main() {
 		log.Fatalf("Error loading config: %v", err)
 	}
 
-	log.Println("Starting router... Listening for notifications")
+	log.Println("Starting slack service... Listening for notifications")
 	consumeSlack(cfg)
 }
 
