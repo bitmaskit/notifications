@@ -3,11 +3,7 @@ package config
 import (
 	"errors"
 	"os"
-
-	"github.com/joho/godotenv"
 )
-
-const env = ".env"
 
 var (
 	ErrBrokerAddrNotSet         = errors.New("KAFKA_BROKER_ADDRESS is not set")
@@ -26,10 +22,6 @@ type RouterConfig struct {
 }
 
 func Load() (*RouterConfig, error) {
-	if err := godotenv.Load(env); err != nil {
-		return nil, err
-	}
-
 	brokerAddr := os.Getenv("KAFKA_BROKER_ADDRESS")
 	if brokerAddr == "" {
 		return nil, ErrBrokerAddrNotSet

@@ -3,11 +3,7 @@ package config
 import (
 	"errors"
 	"os"
-
-	"github.com/joho/godotenv"
 )
-
-const env = ".env"
 
 var ErrFrontendPortNotSet = errors.New("FRONTEND_PORT is not set")
 var ErrBackendHostNotSet = errors.New("BACKEND_HOST is not set")
@@ -18,10 +14,6 @@ type FrontendConfig struct {
 }
 
 func Load() (*FrontendConfig, error) {
-	if err := godotenv.Load(env); err != nil {
-		return nil, err
-	}
-
 	port := os.Getenv("FRONTEND_PORT")
 	if port == "" {
 		return nil, ErrFrontendPortNotSet
