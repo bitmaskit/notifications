@@ -1,7 +1,9 @@
 github.com/IBM/sarama v1.43.2 h1:HABeEqRUh32z8yzY2hGB/j8mHSzC/HA9zlEjqFNCzSw=
 github.com/IBM/sarama v1.43.2/go.mod h1:Kyo4WkF24Z+1nz7xeVUFWIuKVV8RS3wM8mkvPKMdXFQ=
-github.com/bitmaskit/notifications/frontend v0.0.0-20240716125317-600f55c52d45 h1:gVEVzurbBqhYl4PjTS1A3+DGZBgVezR/3bFMh9mEXfo=
-github.com/bitmaskit/notifications/frontend v0.0.0-20240716125317-600f55c52d45/go.mod h1:MWfFmXaymRXiOYKtaHpJy1bHl6zD3R7WEZzMsUKdh0o=
+github.com/bitmaskit/notifications/channel v0.0.0-20240717081551-79fa42d173e6 h1:2PGpT2p5yGb3xVpOInVFVxxsfJ1geRl2QzEigcC4Udo=
+github.com/bitmaskit/notifications/channel v0.0.0-20240717081551-79fa42d173e6/go.mod h1:sPr8AV9RZDW0J7UehyfjXkQUooMoFj/Z8mgafrwrFyU=
+github.com/bitmaskit/notifications/model v0.0.0-20240717081551-79fa42d173e6 h1:akITHaFyXDJVrcvNZrlAJ3bDMjlcQThk7uHB3y2WvNM=
+github.com/bitmaskit/notifications/model v0.0.0-20240717081551-79fa42d173e6/go.mod h1:sIYRYmyQnfkxcYLz0q85Ex9ZEBiPzi5T+2c3Im1Xyrw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

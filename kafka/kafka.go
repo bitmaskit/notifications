@@ -5,23 +5,24 @@ import (
 
 	"github.com/IBM/sarama"
 
-	"github.com/bitmaskit/notifications/kafka/topic"
 	"github.com/bitmaskit/notifications/model"
 )
 
 type Kafka interface {
 	BrokerAddr() string
-	Produce(msg model.NotificationRequest) error
+	ProduceNotification(message model.NotificationRequest) error
 	ProduceToTopic(msg string, topic string) error
 }
 
 type kafka struct {
-	brokerAddress string
+	brokerAddress     string
+	notificationTopic string
 }
 
-func New(brokerAddress string) Kafka {
+func New(brokerAddress string, notificationTopic string) Kafka {
 	return &kafka{
-		brokerAddress: brokerAddress,
+		brokerAddress:     brokerAddress,
+		notificationTopic: notificationTopic,
 	}
 }
 
@@ -29,10 +30,10 @@ func (k *kafka) BrokerAddr() string {
 	return k.brokerAddress
 }
 
-func (k *kafka) Produce(msg model.NotificationRequest) error {
+func (k *kafka) ProduceNotification(msg model.NotificationRequest) error {
 	jsonStr, err := msg.ToJSONString()
 	if err != nil {
-		log.Println("Error marshalling message	: ", err)
+		log.Println("Error marshalling message: ", err)
 		return err
 	}
 	producer, err := sarama.NewSyncProducer([]string{k.BrokerAddr()}, nil)
@@ -45,7 +46,7 @@ func (k *kafka) Produce(msg model.NotificationRequest) error {
 		}
 	}()
 	m := &sarama.ProducerMessage{
-		Topic: topic.NotificationTopic,
+		Topic: k.notificationTopic,
 		Value: sarama.StringEncoder(jsonStr),
 	}
 	partition, offset, err := producer.SendMessage(m)
